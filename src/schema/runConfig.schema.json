@@ -1,0 +1,75 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "definitions": {
+        "InputType": {
+            "enum": [
+                "json",
+                "sql"
+            ],
+            "type": "string"
+        },
+        "OutputType": {
+            "enum": [
+                "gremlinCmd",
+                "gremlinGraph"
+            ],
+            "type": "string"
+        },
+        "RunInputConfig": {
+            "properties": {
+                "config": {
+                },
+                "type": {
+                    "$ref": "#/definitions/InputType"
+                }
+            },
+            "type": "object"
+        },
+        "RunOutputConfig": {
+            "properties": {
+                "config": {
+                },
+                "type": {
+                    "$ref": "#/definitions/OutputType"
+                }
+            },
+            "type": "object"
+        },
+        "RunTransformConfigStringTemplate": {
+            "properties": {
+                "template": {
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
+        "RunTransformConfigTemplatePath": {
+            "properties": {
+                "templatePath": {
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        }
+    },
+    "properties": {
+        "input": {
+            "$ref": "#/definitions/RunInputConfig"
+        },
+        "output": {
+            "$ref": "#/definitions/RunOutputConfig"
+        },
+        "transform": {
+            "anyOf": [
+                {
+                    "$ref": "#/definitions/RunTransformConfigStringTemplate"
+                },
+                {
+                    "$ref": "#/definitions/RunTransformConfigTemplatePath"
+                }
+            ]
+        }
+    },
+    "type": "object"
+}
+

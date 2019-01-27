@@ -1,0 +1,14 @@
+{
+  "extends": [
+    "tslint:latest",
+    "tslint-config-prettier"
+  ],
+  "rules":{
+    "no-console":false,
+    "interface-name":false,
+    "no-shadowed-variable": false,
+    "prefer-conditional-expression": false,
+    "ordered-imports": false
+  },
+  "defaultSeverity": "warn"
+}

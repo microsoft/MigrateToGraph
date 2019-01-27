@@ -1,0 +1,73 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "definitions": {
+        "Edge": {
+            "properties": {
+                "from": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "label": {
+                    "type": "string"
+                },
+                "properties": {
+                    "additionalProperties": {
+                    },
+                    "type": "object"
+                },
+                "to": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "from",
+                "label",
+                "to"
+            ],
+            "type": "object"
+        },
+        "Vertex": {
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "label": {
+                    "type": "string"
+                },
+                "properties": {
+                    "additionalProperties": {
+                    },
+                    "type": "object"
+                }
+            },
+            "required": [
+                "id",
+                "label",
+                "properties"
+            ],
+            "type": "object"
+        }
+    },
+    "properties": {
+        "edges": {
+            "items": {
+                "$ref": "#/definitions/Edge"
+            },
+            "type": "array"
+        },
+        "vertices": {
+            "items": {
+                "$ref": "#/definitions/Vertex"
+            },
+            "type": "array"
+        }
+    },
+    "required": [
+        "edges",
+        "vertices"
+    ],
+    "type": "object"
+}
+
