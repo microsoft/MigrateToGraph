@@ -8,13 +8,13 @@ export function getAddVertexQuery(vertexObj: Vertex): string {
 }
 
 export function getUpdateVertexQuery(vertexObj: Vertex): string {
-  const id = escapeSingleQuote(vertexObj.properties.id);
+  const id = escapeSingleQuote(vertexObj.id);
   const query = `g.V().hasId('${id}')`;
   return query + getPropertiesQuery(vertexObj);
 }
 
 export function getUpdateEdgeQuery(edgeObj: Edge): string {
-  const id = escapeSingleQuote(edgeObj.properties.id);
+  const id = escapeSingleQuote(edgeObj.id);
   const query = `g.E().hasId('${id}')`;
   return query + getPropertiesQuery(edgeObj);
 }

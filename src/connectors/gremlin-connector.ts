@@ -125,7 +125,7 @@ export class GremlinConnector implements OutputConnector {
   }
 
   private vertexEdgeIterator(type: Etype, value: Vertex | Edge, callback: any) {
-    const id = value.properties ? value.properties.id : null;
+    const id = value.id;
 
     async.waterfall(
       [
