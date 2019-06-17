@@ -8,7 +8,7 @@ import { isNullOrUndefined } from 'util';
 import { OutputConnector } from '../models/connector-model';
 
 export class GremlinConnector implements OutputConnector {
-  private client: Gremlin.GremlinClient;
+  private client: Gremlin.driver.Client;
   private batchSize: number;
   private upsert: boolean;
   private retry: number;
@@ -16,12 +16,18 @@ export class GremlinConnector implements OutputConnector {
   private defaultBatchSize = 10;
 
   constructor(config: any) {
-    this.client = Gremlin.createClient(config.port, config.host, {
-      password: config.password,
-      session: false,
-      ssl: true,
-      user: config.user,
+    const authenticator = new Gremlin.driver.auth.PlainTextSaslAuthenticator(
+      config.user,
+      config.password
+    );
+    const endpoint = `wss://${config.host}:${config.port}/gremlin`;
+    this.client = new Gremlin.driver.Client(endpoint, {
+      authenticator,
+      traversalsource: 'g',
+      rejectUnauthorized: true,
+      mimeType: 'application/vnd.gremlin-v2.0+json',
     });
+
     this.batchSize = config.batchSize
       ? config.batchSize
       : this.defaultBatchSize;
@@ -32,6 +38,7 @@ export class GremlinConnector implements OutputConnector {
   public createGraph(graphInfo: GraphInfo, callback: any) {
     async.series(
       [
+        async.asyncify(() => this.client.open()),
         (cb: any) => {
           this.addVertices(graphInfo.vertices, cb);
         },
@@ -70,14 +77,16 @@ export class GremlinConnector implements OutputConnector {
   }
 
   public saveOutput(data: GraphInfo, callback: any) {
-    this.createGraph(data, (err: any) => {
-      this.client.closeConnection();
-      callback(err);
+    this.client.open().then(() => {
+      this.createGraph(data, (err: any) => {
+        this.client.close();
+        callback(err);
+      });
     });
   }
 
   public closeConnection() {
-    this.client.closeConnection();
+    this.client.close();
   }
 
   public checkExists(type: Etype, id: string, callback: any) {
@@ -91,13 +100,15 @@ export class GremlinConnector implements OutputConnector {
     } else {
       query = `g.E().hasId('${id}').count()`;
     }
-    this.client.execute(query, (err, res) => {
-      let exists = false;
-      if (res && res.length > 0 && res[0] > 0) {
-        exists = true;
+    async.asyncify(() => this.client.submit(query))(
+      (err: any, res: number[]) => {
+        let exists = false;
+        if (res && res.length > 0 && res[0] > 0) {
+          exists = true;
+        }
+        callback(err, exists);
       }
-      callback(err, exists);
-    });
+    );
   }
 
   private addToGraph(type: Etype, arr: Vertex[] | Edge[], callback: any) {
@@ -132,7 +143,7 @@ export class GremlinConnector implements OutputConnector {
         (cb: any) => this.checkExists(type, id, cb),
         (res: boolean, cb: any) => {
           const command = this.getCommand(type, value, res);
-          this.client.execute(command, cb);
+          async.asyncify(() => this.client.submit(command))(cb);
         },
       ],
       callback

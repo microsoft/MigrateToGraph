@@ -62,3 +62,7 @@ jspm_packages/
 
 # generated files
 lib
+
+# test files
+input/
+output/

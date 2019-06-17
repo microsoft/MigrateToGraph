@@ -6,6 +6,7 @@ import {
   sqlToGraphCmd,
   runCmd,
 } from './index';
+import { streamJSONCmd } from './commands/stream';
 
 program
   .version('0.0.1')
@@ -14,6 +15,11 @@ program
     console.log('Executing run command');
     runCmd(configFile);
   });
+//Will be added once complete
+// program.command('stream <configFile>').action((configFile: string) => {
+//   console.log('Executing run command');
+//   streamJSONCmd(configFile);
+// });
 program
   .command('jsontogremlin <inputFile> <templateFile> <outputFile>')
   .action((inputFile: string, templateFile: string, outputFile: string) => {
