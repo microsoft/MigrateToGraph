@@ -4,12 +4,18 @@
   // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
   "version": "0.2.0",
   "configurations": [
+
     {
       "type": "node",
       "request": "launch",
       "name": "Debug file",
       "program": "${workspaceRoot}/lib/cli.js",
-      "args": [],
+      "args": [
+        "jsontograph",
+        "input/skillHierarchy.json",
+        "input/template.hbs",
+        "input/graph-config.json"
+      ],
       "cwd": "${workspaceRoot}",
       "sourceMaps": true,
       "smartStep": true,

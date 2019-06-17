@@ -1,5 +1,5 @@
 /* tslint:disable */
-declare module "gremlin"{
+declare module 'gremlin' {
   export namespace driver {
     class Client {
       constructor(url: any, options: any);
@@ -252,8 +252,7 @@ declare module "gremlin"{
       next(): any;
       toList(): any;
     }
-    class TraversalSideEffects {
-    }
+    class TraversalSideEffects {}
     class TraversalStrategies {
       constructor(parent: any);
       strategies: any;
