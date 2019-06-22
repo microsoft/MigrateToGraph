@@ -15,11 +15,11 @@ program
     console.log('Executing run command');
     runCmd(configFile);
   });
-//Will be added once complete
-// program.command('stream <configFile>').action((configFile: string) => {
-//   console.log('Executing run command');
-//   streamJSONCmd(configFile);
-// });
+// Will be added once complete
+program.command('stream <configFile>').action((configFile: string) => {
+  console.log('Executing run command');
+  streamJSONCmd(configFile);
+});
 program
   .command('jsontogremlin <inputFile> <templateFile> <outputFile>')
   .action((inputFile: string, templateFile: string, outputFile: string) => {

@@ -4,6 +4,7 @@ import * as transform from 'parallel-transform';
 import { Transformer } from '../transformer/transformer';
 import * as schema from '../schema/graph-schema.json';
 import * as fs from 'fs-extra';
+import { gremlinCmdStreamWriter } from '../stream/writer';
 
 export function streamJSONCmd(configFile: string) {
   let config = fs.readJSONSync(configFile);
@@ -29,10 +30,10 @@ export function streamJSON(config: any, callback: any) {
     )
     .pipe(
       transform(config.output.batchSize, (data, callback) => {
-        setTimeout(() => callback(null, JSON.stringify(data) + '\n\n'), 2000);
+        callback(null, data);
       })
     )
-    .pipe(process.stdout)
+    .pipe(gremlinCmdStreamWriter(config.output))
     .on('error', err => console.error(err))
     .on('end', callback);
 }
