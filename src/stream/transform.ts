@@ -12,14 +12,17 @@ export function tranformToGraphInfo(config: any) {
   return through2.obj((chunck, enc, callback) => {
     const renderedTemplate = ejsTransform(config, chunck);
     const json: GraphInfo = jsonlint.parse(renderedTemplate);
-    if (validateJSON(json, config.schema)) {
+    if (validateJSON(json, schema)) {
       callback(null, json);
     }
   });
 }
 
 function ejsTransform(config: any, obj: any) {
-  const template = getTemplate(config);
+  let template: string = getTemplate(config);
+  const strt = /"<%/g;
+  const end = /%>"/g;
+  template = template.replace(strt, '<%').replace(end, '%>');
   const opts: ejs.Options = {
     escape: str => JSON.stringify(str),
   };

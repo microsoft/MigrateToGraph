@@ -23,9 +23,9 @@ export class GremlinConnector implements OutputConnector {
     const endpoint = `wss://${config.host}:${config.port}/gremlin`;
     this.client = new Gremlin.driver.Client(endpoint, {
       authenticator,
-      traversalsource: 'g',
-      rejectUnauthorized: true,
       mimeType: 'application/vnd.gremlin-v2.0+json',
+      rejectUnauthorized: true,
+      traversalsource: 'g',
     });
 
     this.batchSize = config.batchSize

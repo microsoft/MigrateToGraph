@@ -7,6 +7,16 @@ export function getAddVertexQuery(vertexObj: Vertex): string {
   return query + getIdQuery(vertexObj) + getPropertiesQuery(vertexObj);
 }
 
+export function getUpsertVertexQuery(vertexObj: Vertex): string {
+  const id = escapeSingleQuote(vertexObj.id);
+  const query = `g.V().has('${
+    vertexObj.label
+  }','id','${id}').fold().coalesce(unfold(),addV(${
+    vertexObj.label
+  }).property('id','${id}'))`;
+  return query + getPropertiesQuery(vertexObj);
+}
+
 export function getUpdateVertexQuery(vertexObj: Vertex): string {
   const id = escapeSingleQuote(vertexObj.id);
   const query = `g.V().hasId('${id}')`;
@@ -16,6 +26,18 @@ export function getUpdateVertexQuery(vertexObj: Vertex): string {
 export function getUpdateEdgeQuery(edgeObj: Edge): string {
   const id = escapeSingleQuote(edgeObj.id);
   const query = `g.E().hasId('${id}')`;
+  return query + getPropertiesQuery(edgeObj);
+}
+
+export function getUpsertEdgeQuery(edgeObj: Edge): string {
+  const id = escapeSingleQuote(edgeObj.id);
+  const query = `g.E().has('${
+    edgeObj.label
+  }','id','${id}').fold().coalesce(unfold(),g.V().has('id','${
+    edgeObj.from
+  }').addE('${edgeObj.label}').to(g.V().has('id','${
+    edgeObj.to
+  }')).property('id','${id}'))`;
   return query + getPropertiesQuery(edgeObj);
 }
 
