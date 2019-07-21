@@ -53,13 +53,6 @@ export class GremlinConnector implements OutputConnector {
   public addVertices(vertices: Vertex[], callback: any) {
     const timer = process.hrtime();
     this.addToGraph(Etype.vertex, vertices, (err: any) => {
-      if (!err) {
-        console.log('\nFinished adding vertices');
-        const timeTaken = convertHrtime(process.hrtime(timer)).seconds;
-        console.log(
-          `Added ${vertices.length} vertices in ${timeTaken} seconds`
-        );
-      }
       callback(err);
     });
   }
@@ -67,11 +60,6 @@ export class GremlinConnector implements OutputConnector {
   public addEdges(edges: Edge[], callback: any) {
     const timer = process.hrtime();
     this.addToGraph(Etype.edge, edges, (err: any) => {
-      if (!err) {
-        console.log('\nFinished adding edges');
-        const timeTaken = convertHrtime(process.hrtime(timer)).seconds;
-        console.log(`Added ${edges.length} edges in ${timeTaken} seconds`);
-      }
       callback(err);
     });
   }
@@ -116,16 +104,12 @@ export class GremlinConnector implements OutputConnector {
     const retryableIterator = this.getRetryable(
       this.vertexEdgeIterator.bind(this)
     );
-    let completedCnt = 0;
     async.eachOfLimit(
       arr as Vertex[] & Edge[],
 
       this.batchSize,
       (value, key, cb) => {
         retryableIterator(type, value, (err: any) => {
-          if (!err) {
-            log(`Added(${type}): ${++completedCnt}/${arr.length}`);
-          }
           cb(err);
         });
       },
@@ -140,9 +124,8 @@ export class GremlinConnector implements OutputConnector {
 
     async.waterfall(
       [
-        (cb: any) => this.checkExists(type, id, cb),
-        (res: boolean, cb: any) => {
-          const command = this.getCommand(type, value, res);
+        (cb: any) => {
+          const command = this.getCommand(type, value, this.upsert);
           async.asyncify(() => this.client.submit(command))(cb);
         },
       ],
@@ -169,15 +152,15 @@ export class GremlinConnector implements OutputConnector {
   private getCommand(
     type: Etype,
     value: Vertex | Edge,
-    update: boolean = false
+    upsert: boolean = false
   ): string {
     if (type === Etype.vertex) {
-      return update
-        ? GraphHelper.getUpdateVertexQuery(value as Vertex)
+      return upsert
+        ? GraphHelper.getUpsertVertexQuery(value as Vertex)
         : GraphHelper.getAddVertexQuery(value as Vertex);
     } else {
-      return update
-        ? GraphHelper.getUpdateEdgeQuery(value as Edge)
+      return upsert && value.id != null
+        ? GraphHelper.getUpsertEdgeQuery(value as Edge)
         : GraphHelper.getAddEdgeQuery(value as Edge);
     }
   }

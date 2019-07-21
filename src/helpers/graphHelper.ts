@@ -11,9 +11,9 @@ export function getUpsertVertexQuery(vertexObj: Vertex): string {
   const id = escapeSingleQuote(vertexObj.id);
   const query = `g.V().has('${
     vertexObj.label
-  }','id','${id}').fold().coalesce(unfold(),addV(${
+  }','id','${id}').fold().coalesce(unfold(),addV('${
     vertexObj.label
-  }).property('id','${id}'))`;
+  }').property('id','${id}'))`;
   return query + getPropertiesQuery(vertexObj);
 }
 
