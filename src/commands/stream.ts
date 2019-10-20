@@ -32,4 +32,3 @@ export function stream(config: any, callback: any) {
     .on('error', (err: Error) => console.error(err))
     .on('finish', callback);
 }
-

@@ -59,21 +59,21 @@
     "properties": {
         "edges": {
             "items": {
-                "$ref": "#/definitions/Edge"
+              "oneOf": [
+                {"$ref": "#/definitions/Edge"},
+                { "type": "string", "pattern": "^<%(.*)%>$"}
+              ]
             },
-            "oneOf": [
-              { "type": "array"},
-              { "type": "string", "pattern": "^<%(.*)%>$"}
-            ]
+            "type": "array"
         },
         "vertices": {
             "items": {
-                "$ref": "#/definitions/Vertex"
+              "oneOf": [
+                { "$ref": "#/definitions/Vertex"},
+                { "type": "string", "pattern": "^<%(.*)%>$"}
+              ]
             },
-            "oneOf": [
-              { "type": "array"},
-              { "type": "string", "pattern": "^<%(.*)%>$"}
-            ]
+            "type": "array"
         }
     },
     "required": [
