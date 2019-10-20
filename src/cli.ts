@@ -15,7 +15,7 @@ program
     console.log('Executing run command');
     runCmd(configFile);
   });
-// Will be added once complete
+
 program.command('stream <configFile>').action((configFile: string) => {
   console.log('Executing stream command');
   streamCmd(configFile);
