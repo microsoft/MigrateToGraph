@@ -3,6 +3,17 @@ import * as fs from 'fs-extra';
 import * as JSONStream from 'JSONStream';
 import * as stream from 'stream';
 
+export function getStreamReader(type: string, config: any) {
+  switch (type) {
+    case 'sql':
+      return sqlStreamReader(config);
+    case 'json':
+      return jsonStreamReader(config);
+    default:
+      throw new Error(`Invalid input type ${type}`);
+  }
+}
+
 export function sqlStreamReader(config: any) {
   const client = knex({
     client: config.dialect,

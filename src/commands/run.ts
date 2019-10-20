@@ -5,13 +5,17 @@ import { getInputConnector, getOutputConnector } from '../loaders/io-loader';
 import { Transformer } from '../transformer/transformer';
 import * as graphSchema from '../schema/graph-schema.json';
 import { GraphInfo } from '../models/graph-model';
+import convertHrtime = require('convert-hrtime');
 
 export function runCmd(configFile: string) {
+  const timer = process.hrtime();
   const config = fs.readJSONSync(configFile);
   run(config, (err: any) => {
     if (err) {
       console.log(err.message);
     }
+    const timeTaken = convertHrtime(process.hrtime(timer)).seconds;
+    console.log(`process completed in ${timeTaken} seconds`);
   });
 }
 

@@ -1,38 +1,34 @@
-import { jsonStreamReader } from '../stream/reader';
+import { jsonStreamReader, getStreamReader } from '../stream/reader';
 import * as through2 from 'through2';
 import * as transform from 'parallel-transform';
 import { Transformer } from '../transformer/transformer';
 import * as schema from '../schema/graph-schema.json';
 import * as fs from 'fs-extra';
+import { gremlinCmdStreamWriter, getStreamWriter } from '../stream/writer';
+import { tranformToGraphInfo } from '../stream/transform';
+import convertHrtime = require('convert-hrtime');
 
-export function streamJSONCmd(configFile: string) {
-  let config = fs.readJSONSync(configFile);
-  streamJSON(config, () => console.log('stream ended'));
+export function streamCmd(configFile: any) {
+  const timer = process.hrtime();
+  const config = fs.readJSONSync(configFile);
+  stream(config, (err: Error) => {
+    if (err) {
+      console.log(err);
+    }
+    const timeTaken = convertHrtime(process.hrtime(timer)).seconds;
+    console.log(`process completed in ${timeTaken} seconds`);
+  });
 }
 
-export function streamJSON(config: any, callback: any) {
-  return jsonStreamReader(config.input)
+export function stream(config: any, callback: any) {
+  return getStreamReader(config.input.type, config.input.config)
+    .pipe(tranformToGraphInfo(config.transform.config))
     .pipe(
-      through2.obj(function(chunck, enc, callback) {
-        const transformer = new Transformer(config.transform);
-        transformer.transformInput(
-          [chunck],
-          schema,
-          (err: any, result: any) => {
-            if (!err) {
-              this.push(result);
-              callback();
-            }
-          }
-        );
+      transform(config.output.config.batchSize, (data, cb) => {
+        cb(null, data);
       })
     )
-    .pipe(
-      transform(config.output.batchSize, (data, callback) => {
-        setTimeout(() => callback(null, JSON.stringify(data) + '\n\n'), 2000);
-      })
-    )
-    .pipe(process.stdout)
-    .on('error', err => console.error(err))
-    .on('end', callback);
+    .pipe(getStreamWriter(config.output.type, config.output.config))
+    .on('error', (err: Error) => console.error(err))
+    .on('finish', callback);
 }
