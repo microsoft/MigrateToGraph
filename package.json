@@ -48,7 +48,7 @@
     "handlebars": "^4.4.3",
     "json-source-map": "^0.4.0",
     "jsonlint": "^1.6.3",
-    "knex": "^0.16.3",
+    "knex": "^0.19.5",
     "mssql": "^5.0.3",
     "mysql2": "^1.6.1",
     "parallel-transform": "^1.1.0",
