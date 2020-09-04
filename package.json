@@ -54,7 +54,7 @@
     "parallel-transform": "^1.1.0",
     "pg": "^7.6.0",
     "pg-hstore": "^2.3.2",
-    "sequelize": "^4.44.3",
+    "sequelize": "^5.15.1",
     "single-line-log": "^1.1.2",
     "sqlite3": "^4.0.3",
     "through2": "^3.0.1",
